@@ -12,12 +12,12 @@ import android.widget.TextView;
 import java.util.List;
 import java.util.Random;
 
-public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder> {
-    private List<ModelMessage> messageList;
+public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.ViewHolder> {
+    private List<InboxModel> inboxModelList;
     private Context context;
 
-    public MessageAdapter(List<ModelMessage> messageList, Context context) {
-        this.messageList = messageList;
+    public InboxAdapter(List<InboxModel> inboxModelList, Context context) {
+        this.inboxModelList = inboxModelList;
         this.context = context;
     }
 
@@ -30,22 +30,22 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        ModelMessage modelMessage = messageList.get(position);
+        InboxModel inboxModel = inboxModelList.get(position);
 
         Random rand = new Random();
         int color = Color.argb(255, rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));
         ((GradientDrawable) viewHolder.textCircle.getBackground()).setColor(color);
 
-        viewHolder.textCircle.setText(modelMessage.getCircleText());
-        viewHolder.textHead.setText(modelMessage.getHeadText());
-        viewHolder.textSub.setText(modelMessage.getSubText());
-        viewHolder.textDes.setText(modelMessage.getDesText());
-        viewHolder.textDate.setText(modelMessage.getDateText());
+        viewHolder.textCircle.setText(inboxModel.getCircleText());
+        viewHolder.textHead.setText(inboxModel.getHeadText());
+        viewHolder.textSub.setText(inboxModel.getSubText());
+        viewHolder.textDes.setText(inboxModel.getDesText());
+        viewHolder.textDate.setText(inboxModel.getDateText());
     }
 
     @Override
     public int getItemCount() {
-        return messageList.size();
+        return inboxModelList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

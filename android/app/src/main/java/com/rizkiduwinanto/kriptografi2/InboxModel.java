@@ -1,13 +1,13 @@
 package com.rizkiduwinanto.kriptografi2;
 
-public class ModelMessage {
+public class InboxModel {
     private String circleText;
     private String headText;
     private String subText;
     private String desText;
     private String dateText;
 
-    public ModelMessage(String circleText, String headText, String subText, String desText, String dateText) {
+    public InboxModel(String circleText, String headText, String subText, String desText, String dateText) {
         this.circleText = circleText;
         this.headText = headText;
         this.subText = subText;
