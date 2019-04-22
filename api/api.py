@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 
-import email, smtplib, ssl
+import email, smtplib, ssl, Keccak
 
 from email import encoders
 from email.mime.base import MIMEBase
@@ -18,6 +18,21 @@ client = MongoClient('localhost', 27017)
 db = client.crypto2
 sent_mail = db.sent_mail
 inbox = db.inbox
+
+def hash(body):
+  hex_body = body.encode('utf-8').hex()
+  M = len(hex_body) * 4
+  r = 1152
+  c = 448
+  n = 224
+  myKeccak = Keccak.Keccak()
+  md = myKeccak.Keccak((M, hex_body), r, c, n, True)
+  
+  return md
+
+def signature(md, body):
+  digital_signature = "<ds>" + md + "</ds>"
+  body = body + '\n\n' + digital_signature
 
 @app.route('/')
 def hello():
