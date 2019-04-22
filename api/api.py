@@ -91,5 +91,14 @@ def get_sent_mail():
   
 @app.route('/inbox')
 def get_inbox():
-  return 'Hello, World!'
+  uid = request.args.get('uid')
+  query = { "uid" : uid }
+  
+  docs = []
+  for doc in inbox.find(query):
+    id = str(doc.pop('_id'))
+    doc['id'] = id
+    docs.append(doc)
+
+  return jsonify(docs)
 
