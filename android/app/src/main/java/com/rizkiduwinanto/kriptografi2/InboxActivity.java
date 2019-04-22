@@ -70,7 +70,7 @@ public class InboxActivity extends AppCompatActivity {
                         try {
                             JSONArray jsonArray = new JSONArray(response);
 
-                            for (int i = 0; i < 0; i++) {
+                            for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject object = jsonArray.getJSONObject(i);
                                 InboxModel inboxModel = new InboxModel(
                                         object.getString("head").substring(0, 1),

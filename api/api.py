@@ -66,7 +66,9 @@ def send_mail():
   message["To"] = receiver_email
   message["Subject"] = subject
 
-  message.attach(MIMEText(body, "plain"))
+  signed_body = signature(body)
+
+  message.attach(MIMEText(signed_body, "plain"))
 
   if filename != None:
     with open(filename, "rb") as attachment:
@@ -92,7 +94,7 @@ def send_mail():
                 "email_from" : sender_email, 
                 "email_to"   : receiver_email, 
                 "subject"    : subject, 
-                "body"       : body, 
+                "body"       : signed_body, 
                 "attachment" : filename,
                 "encrypt_key": encrypt_key,
                 "private_key": private_key,
