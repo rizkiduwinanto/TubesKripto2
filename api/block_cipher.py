@@ -161,7 +161,10 @@ def split_block(teks, teks_length, n_bit):
     blocks = changeToMatrix(teks,n_blocks)
     return blocks
 
-def encrypt(blocks,key):
+def encrypt(body,key):
+    body = ''.join(format(ord(x),'08b')for x in body) 
+    key = ''.join(format(ord(x),'08b')for x in key)
+    blocks = split_block(body, len(body), 128)
     encrypted_text = ""
     for block in blocks:
         internal_key = key
@@ -178,8 +181,7 @@ def encrypt(blocks,key):
         for i in range(0, len(hasil), 8):
             temp += chr(int(hasil[i:i+8],2))
         encrypted_text += temp
-    print("encrypted_text", encrypted_text)
-    return encrypted_text.encode()
+    return encrypted_text
 
 def decrypt(encrypted_text, key, n_bit):
     teks = ''.join(format(ord(x),'08b')for x in encrypted_text)
@@ -208,31 +210,14 @@ def decrypt(encrypted_text, key, n_bit):
 
 def main():
     #get user input
-    namafile = input("input nama file yang akan di enkripsi : ")
-    teks = openFile(namafile)
-    print(teks[0])
-    #teks = input("Masukkan teks: ")
+    teks = input("input teks: ")
     key = input("Masukkan kunci: ")
     
-    n_bit = input("Masukkan panjang blok (64/128/256): ")
     
-    #change input to bits
-    teks = ''.join(format(ord(x),'08b')for x in teks)
-    print(teks)
-    key = ''.join(format(ord(x),'08b')for x in key)
-    
-    #split text to blocks
-    blocks = split_block(teks, len(teks), n_bit)
     awal = time.time()
-    encrypted_text = encrypt(blocks,key)
-    writeFileBiner("hasil.txt",encrypted_text)
+    encrypted_text = encrypt(teks,key)
+    print(encrypted_text)
     akhir = time.time() 
-    print ("Total Waktu Proses ", akhir- awal, " Detik."  )
-    awal = time.time()
-    encrypted_text=openFileBiner("hasil.txt")
-    decrypt(encrypted_text.decode(),key,n_bit)
-    
-    akhir = time.time()  
     print ("Total Waktu Proses ", akhir- awal, " Detik."  )
     
 if __name__ == "__main__":
