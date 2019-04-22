@@ -30,9 +30,20 @@ def hash(body):
   
   return md
 
-def signature(md, body):
-  digital_signature = "<ds>" + md + "</ds>"
+def signature(md, body, private_key):
+  digital_signature = "<ds>" + ecceg_encrypt(private_key, md) + "</ds>"
   body = body + '\n\n' + digital_signature
+
+def check_signature(body, public_key):
+  # split body into message and digital signature
+  message, ds = body.replace(' </ds>','').split('<ds> ')
+  message = message.rstrip()
+  ds = ds.rstrip()
+  
+  if hash(message) == ecceg_decrypt(ds):
+    return true
+  else
+    return false
 
 @app.route('/')
 def hello():
