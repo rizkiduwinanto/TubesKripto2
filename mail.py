@@ -1,9 +1,18 @@
-import email, smtplib, ssl
+import email, smtplib, ssl, Keccak
 
 from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+
+def hash(body):
+    hex_body = body.encode('utf-8').hex()
+    M = len(hex_body) * 4
+    r = 1152
+    c = 448
+    n = 224
+    myKeccak = Keccak.Keccak()
+    return myKeccak.Keccak((M, hex_body), r, c, n, True)
 
 subject = input("mail subject : ")
 body = input("mail body : ")
