@@ -1,7 +1,7 @@
 import easyimap
 
-login = 'kripto.mail20@gmail.com'
-password = 'bismillah_1'
+login = input("input email address : ")
+password = input("input password : ")
 
 imapper = easyimap.connect('imap.gmail.com', login, password)
 for mail_id in imapper.listids(limit=100):
