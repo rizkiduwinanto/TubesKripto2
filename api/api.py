@@ -10,6 +10,8 @@ from email.mime.text import MIMEText
 from flask import Flask, request, jsonify
 
 import datetime
+import easyimap
+import json
 
 app = Flask(__name__)
 
@@ -104,29 +106,52 @@ def send_mail():
 
   return jsonify(status=200,message='Message Sent',sent_mail_id=str(sent_mail_id))
 
-@app.route('/sent_mail')
-def get_sent_mail():
-  uid = request.args.get('uid')
-  query = { "uid" : uid }
-  
-  docs = []
-  for doc in sent_mail.find(query):
-    id = str(doc.pop('_id'))
-    doc['id'] = id
-    docs.append(doc)
-
-  return jsonify(docs)
-  
-@app.route('/inbox')
+@app.route('/inbox', methods=['GET'])
 def get_inbox():
   uid = request.args.get('uid')
-  query = { "uid" : uid }
-  
-  docs = []
-  for doc in inbox.find(query):
-    id = str(doc.pop('_id'))
-    doc['id'] = id
-    docs.append(doc)
+  email = request.args.get('email')
+  password = request.args.get('password')
 
-  return jsonify(docs)
+  mail_inbox = {}
+  imapper = easyimap.connect('imap.gmail.com', email, password)
+  i=0
+  for mail_id in imapper.listids(limit=10):
+    mail = imapper.mail(mail_id)
+    inboxs = {}
+    inboxs['from'] = mail.from_addr
+    inboxs['to'] = mail.to
+    inboxs['cc'] = mail.cc
+    inboxs['title'] = mail.title
+    inboxs['body'] = mail.body
+    mail_inbox[i]=inboxs
+    i+=1
+
+  json_string = json.dumps(mail_inbox)
+  return json_string
+
+# @app.route('/sent_mail')
+# def get_sent_mail():
+#   uid = request.args.get('uid')
+#   query = { "uid" : uid }
+  
+#   docs = []
+#   for doc in sent_mail.find(query):
+#     id = str(doc.pop('_id'))
+#     doc['id'] = id
+#     docs.append(doc)
+
+#   return jsonify(docs)
+  
+# @app.route('/inbox')
+# def get_inbox():
+#   uid = request.args.get('uid')
+#   query = { "uid" : uid }
+  
+#   docs = []
+#   for doc in inbox.find(query):
+#     id = str(doc.pop('_id'))
+#     doc['id'] = id
+#     docs.append(doc)
+
+#   return jsonify(docs)
 
