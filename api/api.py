@@ -63,7 +63,12 @@ def check_signature(body, public_key):
   b = 188
   n = 727
 
-  if hash(message) == do_decryption(a, b, p, k, n, ds, public_key):
+  md = hash(body)
+
+  regex = re.compile('[^0-9]+')
+  md = regex.sub('', md).lower()
+
+  if md == do_decryption(a, b, p, k, n, ds, public_key):
     return True
   else:
     return False
