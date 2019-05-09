@@ -2,10 +2,13 @@ from pymongo import MongoClient
 
 import email, smtplib, ssl, Keccak
 
+import re
 from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+
+from ECCEG import do_encryption, do_decryption
 
 from flask import Flask, request, jsonify
 
@@ -33,7 +36,19 @@ def hash(body):
   return md
 
 def signature(md, body, private_key):
-  digital_signature = "<ds>" + ecceg_encrypt(private_key, md) + "</ds>"
+  k = 10
+  p = 2570
+  a = -1
+  b = 188
+  n = 727
+
+  print('Test')
+  print(md)
+
+  regex = re.compile('[^0-9]+')
+  md = regex.sub('', md).lower()
+
+  digital_signature = "<ds>" + do_encryption(a, b, p, k, n, md, private_key) + "</ds>"
   body = body + '\n\n' + digital_signature
 
 def check_signature(body, public_key):
@@ -42,10 +57,16 @@ def check_signature(body, public_key):
   message = message.rstrip()
   ds = ds.rstrip()
   
-  if hash(message) == ecceg_decrypt(ds):
-    return true
-  else
-    return false
+  k = 10
+  p = 2570
+  a = -1
+  b = 188
+  n = 727
+
+  if hash(message) == do_decryption(a, b, p, k, n, ds, public_key):
+    return True
+  else:
+    return False
 
 @app.route('/')
 def hello():
@@ -68,7 +89,9 @@ def send_mail():
   message["To"] = receiver_email
   message["Subject"] = subject
 
-  signed_body = signature(body)
+  signed_body = signature(hash(body), body, private_key)
+
+  print(signed_body)
 
   message.attach(MIMEText(signed_body, "plain"))
 

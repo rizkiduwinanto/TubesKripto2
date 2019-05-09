@@ -68,6 +68,52 @@ def read_private_key(file_path):
     f.close()
     return int(pri)
 
+def do_encryption(a, b, p, k, n, messages, public_b):
+  ecc = ECC(a, b, p)
+  x = -1
+  y = -1
+  while (y == -1):
+    x += 1
+    y = is_y_exist(p,a,b,x)
+  point_basis =  Point(x,y) if (y != -1) else Point.INFINITY
+
+  encoded_messages = do_encoding(k, n, p, a, b, messages)
+
+  print(encoded_messages)
+
+  public_b = Point(int(public_b.split(',')[0]), int(public_b.split(',')[1]))
+  print(public_b)
+
+  choosen_k = k
+  encrypted_messages = [
+      (ecc.iteration(point_basis, choosen_k),
+      ecc.add(point_message, ecc.iteration(public_b, choosen_k)))
+      for point_message in encoded_messages
+  ]
+  return str(encrypted_messages)
+
+def do_decryption(a, b, p, k, n, encrypted_messages, private_b):
+  ecc = ECC(a, b, p)
+  x = -1
+  y = -1
+  while (y == -1):
+    x += 1
+    y = is_y_exist(p,a,b,x)
+  point_basis =  Point(x,y) if (y != -1) else Point.INFINITY
+
+  choosen_k = k
+  decrypted_messages = [
+      ecc.subtract(
+          message[1],
+          ecc.iteration(message[0], private_b)
+      )
+      for message in encrypted_messages
+  ]
+  decoded_messages = (do_decoding(choosen_k, decrypted_messages))
+  message = b"".join(decoded_messages)
+  return message
+
+
 def main(args):
   # CONFIG
   k = 10
