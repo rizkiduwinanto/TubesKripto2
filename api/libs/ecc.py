@@ -28,10 +28,10 @@ class Point(object):
         return (self.x == -1 and self.y == -1)
     
     def __str__(self):
-        return "Point({}, {})".format(self.x, self.y)
+        return "({}, {})".format(self.x, self.y)
     
     def __repr__(self):
-        return "Point({}, {})".format(self.x, self.y)
+        return "({}, {})".format(self.x, self.y)
         
                
 class ECC(object):
