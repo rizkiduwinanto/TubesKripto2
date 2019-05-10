@@ -54,8 +54,8 @@ def signature(md, body, private_key):
 
 def check_signature(body, public_key):
   # split body into message and digital signature
-  message, ds = body.split('<ds>')
-
+  print(body.split('<ds>'))
+  message, ds, _ = body.split('<ds>')
 
   message = message.rstrip()
   ds = ds.rstrip()
