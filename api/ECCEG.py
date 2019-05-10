@@ -98,18 +98,31 @@ def do_decryption(a, b, p, k, n, encrypted_messages, private_b):
   ecc = ECC(a, b, p)
   x = -1
   y = -1
+
+  encrypted_messages_points =[]
+
+  for encrypted_message in encrypted_messages:
+    encrypted_message = encrypted_message.replace('(','').replace(')','')
+    temp_x, temp_y = encrypted_message.split(',')
+    temp_x = int(temp_x)
+    temp_y = int(temp_y)
+
+    encrypted_messages_points.append(Point(temp_x, temp_y))
+  
   while (y == -1):
     x += 1
     y = is_y_exist(p,a,b,x)
   point_basis =  Point(x,y) if (y != -1) else Point.INFINITY
 
+  print(type(encrypted_messages_points[0]))
+
   choosen_k = k
   decrypted_messages = [
       ecc.subtract(
-          message[1],
-          ecc.iteration(message[0], private_b)
+          encrypted_messages_points[i+1],
+          ecc.iteration(encrypted_messages_points[i], private_b)
       )
-      for message in encrypted_messages
+      for i in range(0,len(encrypted_messages_points),2)
   ]
   decoded_messages = (do_decoding(choosen_k, decrypted_messages))
   message = b"".join(decoded_messages)

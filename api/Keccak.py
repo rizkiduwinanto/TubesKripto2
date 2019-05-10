@@ -222,18 +222,20 @@ class Keccak:
         """Perform Keccak-f function on the state A
 
         A: 5×5 matrix containing the state
-        verbose: a boolean flag activating the printing of intermediate computations
+        not verbose: a boolean flag activating the printing of intermediate computations
         """
 
-        if verbose:
-            self.printState(A,"Before first round")
+        if not verbose:
+            # self.printState(A,"Before first round")
+            pass
 
         for i in range(self.nr):
             #NB: result is truncated to lane size
             A = self.Round(A,self.RC[i]%(1<<self.w))
 
-            if verbose:
-                  self.printState(A,"Satus end of round #%d/%d" % (i+1,self.nr))
+            if not verbose:
+                #   self.printState(A,"Satus end of round #%d/%d" % (i+1,self.nr))
+                pass
 
         return A
 
@@ -288,14 +290,14 @@ class Keccak:
 
         return my_string
 
-    def Keccak(self,M,r=1024,c=576,n=1024,verbose=False):
+    def Keccak(self,M,r=1024,c=576,n=1024, verbose=False):
         """Compute the Keccak[r,c,d] sponge function on message M
 
         M: message pair (length in bits, string of hex characters ('9AFC...')
         r: bitrate in bits (defautl: 1024)
         c: capacity in bits (default: 576)
         n: length of output in bits (default: 1024),
-        verbose: print the details of computations(default:False)
+        not verbose: print the details of computations(default:False)
         """
 
         #Check the inputs
@@ -305,7 +307,7 @@ class Keccak:
             raise KeccakError.KeccakError('outputLength must be a multiple of 8')
         self.setB(r+c)
 
-        if verbose:
+        if not verbose:
             print("Create a Keccak function with (r=%d, c=%d (i.e. w=%d))" % (r,c,(r+c)//25))
 
         #Compute lane length (in bits)
@@ -321,7 +323,7 @@ class Keccak:
         #Padding of messages
         P = self.pad10star1(M, r)
 
-        if verbose:
+        if not verbose:
             print("String ready to be absorbed: %s (will be completed by %d x '00')" % (P, c//8))
 
         #Absorbing phase
@@ -331,9 +333,9 @@ class Keccak:
             for y in range(5):
               for x in range(5):
                   S[x][y] = S[x][y]^Pi[x][y]
-            S = self.KeccakF(S, verbose)
+            S = self.KeccakF(S, not verbose)
 
-        if verbose:
+        if not verbose:
             print("Value after absorption : %s" % (self.convertTableToStr(S)))
 
         #Squeezing phase
@@ -344,12 +346,12 @@ class Keccak:
             Z = Z + string[:r*2//8]
             outputLength -= r
             if outputLength>0:
-                S = self.KeccakF(S, verbose)
+                S = self.KeccakF(S, not verbose)
 
             # NB: done by block of length r, could have to be cut if outputLength
             #     is not a multiple of r
 
-        if verbose:
+        if not verbose:
             print("Value after squeezing : %s" % (self.convertTableToStr(S)))
 
         return Z[:2*n//8]

@@ -8,6 +8,8 @@ from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
+from block_cipher import encrypt
+
 from ECCEG import do_encryption, do_decryption
 
 from flask import Flask, request, jsonify
@@ -54,11 +56,22 @@ def signature(md, body, private_key):
 
 def check_signature(body, public_key):
   # split body into message and digital signature
-  print(body.split('<ds>'))
-  message, ds, _ = body.split('<ds>')
+  message, ds = body.split('<ds>')
+  ds, temp = ds.split('</ds>')
 
   message = message.rstrip()
   ds = ds.rstrip()
+
+  ds = ds.split("),")
+  #print(a)
+  for i in range(len(ds)):
+    if(i%2==0):
+        ds[i] = ds[i][2:] +")"
+    ds[i].rstrip()
+    if(i==len(ds)-1):
+      ds[i]=ds[i][:len(ds[i])-2]
+    print(ds[i])
+
   
   k = 10
   p = 2570
@@ -101,9 +114,14 @@ def send_mail():
 
   print(signed_body)
 
-  check_signature(signed_body, 455)
+  # check_signature(signed_body, 455)
 
   message.attach(MIMEText(signed_body, "plain"))
+  
+  if encrypt_key != None:
+    body = encrypt(body,encrypt_key)
+    print('ini debug')
+    print(body)
 
   if filename != None:
     with open(filename, "rb") as attachment:
