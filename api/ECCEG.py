@@ -90,6 +90,8 @@ def do_encryption(a, b, p, k, n, messages, public_b):
       ecc.add(point_message, ecc.iteration(public_b, choosen_k)))
       for point_message in encoded_messages
   ]
+  print('x')
+  print(str(encrypted_messages))
   return str(encrypted_messages)
 
 def do_decryption(a, b, p, k, n, encrypted_messages, private_b):

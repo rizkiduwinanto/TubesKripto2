@@ -50,10 +50,13 @@ def signature(md, body, private_key):
 
   digital_signature = "<ds>" + do_encryption(a, b, p, k, n, md, private_key) + "</ds>"
   body = body + '\n\n' + digital_signature
+  return body
 
 def check_signature(body, public_key):
   # split body into message and digital signature
-  message, ds = body.replace(' </ds>','').split('<ds> ')
+  message, ds = body.split('<ds>')
+
+
   message = message.rstrip()
   ds = ds.rstrip()
   
@@ -97,6 +100,8 @@ def send_mail():
   signed_body = signature(hash(body), body, private_key)
 
   print(signed_body)
+
+  check_signature(signed_body, 455)
 
   message.attach(MIMEText(signed_body, "plain"))
 
